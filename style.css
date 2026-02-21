@@ -319,3 +319,45 @@ button:not(.btn-search):not(.item-container button):not(.btn-add):hover {
         width: 100%;
     }
 }
+/* ==============================
+   CONFIGURAÇÃO PARA FIXAR RODAPÉ
+============================== */
+
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    min-height: 100vh;
+}
+
+/* Faz o conteúdo ocupar o espaço disponível */
+.container {
+    flex: 1;
+}
+
+/* ==============================
+   CRÉDITO FIXO NO RODAPÉ
+============================== */
+
+.credito {
+    text-align: center;
+    padding: 12px 0;
+    font-size: 14px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+}
+
+.credito a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.credito a:hover {
+    color: #0a66c2;
+}
