@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitação de NFe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- jsPDF AutoTable (TABELA PROFISSIONAL) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+</head>
+<body>
+
+<header>
+    <img src="imagens/logo_cerradão.png" class="logo-esquerda">
+    <h1>SOLICITAÇÃO DE NFe</h1>
+    <img src="imagens/logo_ppcm.png" class="logo-direita">
+</header>
+
+<div class="container">
+
+    <!-- ================= LADO ESQUERDO ================= -->
+
+    <div class="form-left">
+
+        <label>Solicitante:</label>
+        <input type="text" id="solicitante">
+
+        <label>Cargo:</label>
+        <input type="text" id="cargo">
+
+        <!-- EMPRESA (DESTINATÁRIO) -->
+        <label>Destinatário:</label>
+        <div class="empresa-container">
+            <input type="text" id="empresaInput" placeholder="Digite o nome da empresa">
+            <button type="button" id="buscarEmpresa" class="btn-search">
+                <span class="material-symbols-outlined">search</span>
+            </button>
+        </div>
+
+        <label>CNPJ:</label>
+        <input type="text" id="cnpj">
+
+        <!-- OPERAÇÃO -->
+        <label>Natureza da Operação:</label>
+        <div class="empresa-container">
+            <input type="text" id="operacaoInput" placeholder="Selecione a operação" readonly>
+            <button type="button" id="buscarOperacao" class="btn-search">
+                <span class="material-symbols-outlined">arrow_drop_down</span>
+            </button>
+        </div>
+
+        <!-- FRETE -->
+        <label>Frete:</label>
+        <div class="frete-container">
+            <label class="frete-option">
+                <input type="radio" name="frete" value="Emitente">
+                Emitente
+            </label>
+
+            <label class="frete-option">
+                <input type="radio" name="frete" value="Destinatário">
+                Destinatário
+            </label>
+        </div>
+
+        <label>Transportadora:</label>
+        <input type="text" id="transportadora">
+
+        <label>Observação:</label>
+        <textarea id="descricao"></textarea>
+
+    </div>
+
+    <!-- ================= LADO DIREITO ================= -->
+
+    <div class="form-right">
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:120px;">COD.</th>
+                    <th>DESCRIÇÃO ITEM</th>
+                    <th style="width:80px;">QNT.</th>
+                    <th style="width:100px;">VALOR</th>
+                    <th style="width:120px;">LACRE</th>
+                </tr>
+            </thead>
+            <tbody id="itens">
+                <!-- Linhas criadas via JS -->
+            </tbody>
+        </table>
+
+        <!-- BOTÃO ADICIONAR ITEM -->
+        <button type="button" id="adicionarLinhaBtn" class="btn-add">
+            <span class="material-symbols-outlined">add</span>
+            Adicionar Item
+        </button>
+
+        <div class="total">
+            Valor Total: R$ <span id="valorTotal">0.00</span>
+        </div>
+
+        <button onclick="gerarPDF()">Gerar PDF Oficial</button>
+
+    </div>
+
+</div>
+
+<!-- ================= MODAL EMPRESA ================= -->
+
+<div id="modalEmpresa" class="modal">
+    <div class="modal-content">
+        <h3>Buscar Empresa</h3>
+        <input type="text" id="pesquisaEmpresa" placeholder="Digite para pesquisar...">
+        <div id="listaEmpresas"></div>
+        <button onclick="modalEmpresa.style.display='none'">Fechar</button>
+    </div>
+</div>
+
+<!-- ================= MODAL OPERAÇÃO ================= -->
+
+<div id="modalOperacao" class="modal">
+    <div class="modal-content">
+        <h3>Selecionar Operação</h3>
+        <div id="listaOperacoes"></div>
+        <button onclick="modalOperacao.style.display='none'">Fechar</button>
+    </div>
+</div>
+
+<!-- ================= MODAL MATERIAL ================= -->
+
+<div id="modalMaterial" class="modal">
+    <div class="modal-content">
+        <h3>Buscar Material</h3>
+        <input type="text" id="pesquisaMaterial" placeholder="Digite código ou descrição...">
+        <div id="listaMateriais"></div>
+        <button onclick="modalMaterial.style.display='none'">Fechar</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
