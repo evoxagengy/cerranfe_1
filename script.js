@@ -1,7 +1,8 @@
+let materiais = [];
+let empresas = [];
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    let empresas = [];
-    let materiais = [];
     let linhaAtual = null;
 
     const empresaInput = document.getElementById("empresaInput");
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const operacoes = [
         "Remessa p/ Conserto",
+        "Retorno de Conserto",
         "Remessa p/ Industrialização",
         "Retorno de Industrialização",
         "Remessa p/ Acoplamento",
@@ -39,8 +41,21 @@ document.addEventListener("DOMContentLoaded", function () {
         "Transferência entre Filiais"
     ];
 
-    fetch("empresas.json").then(r => r.json()).then(d => empresas = d);
-    fetch("materiais.json").then(r => r.json()).then(d => materiais = d);
+    fetch("empresas.json")
+        .then(r => r.json())
+        .then(d => empresas = d);
+
+    fetch("materiais.json")
+    .then(response => response.json())
+    .then(data => {
+        materiais = data;
+        console.log("Materiais carregados:", materiais.length);
+    })
+    .catch(error => console.error("Erro ao carregar materiais:", error));
+    
+    // ==============================
+    // BUSCA EMPRESA
+    // ==============================
 
     document.getElementById("buscarEmpresa").onclick = () => {
         modalEmpresa.style.display = "flex";
@@ -50,39 +65,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderizarEmpresas(lista) {
         listaEmpresas.innerHTML = "";
+
         lista.forEach(emp => {
             const div = document.createElement("div");
             div.classList.add("empresa-item");
             div.innerText = `${emp.nome} - ${emp.cnpj}`;
+
             div.onclick = () => {
                 empresaInput.value = emp.nome;
                 campoCNPJ.value = emp.cnpj;
                 modalEmpresa.style.display = "none";
             };
+
             listaEmpresas.appendChild(div);
         });
     }
 
     pesquisaEmpresa.addEventListener("input", function () {
         const termo = this.value.toLowerCase();
+
         const filtradas = empresas.filter(emp =>
             emp.nome.toLowerCase().includes(termo) ||
             emp.cnpj.toLowerCase().includes(termo)
         );
+
         renderizarEmpresas(filtradas);
     });
+
+    // ==============================
+    // BUSCA OPERAÇÃO
+    // ==============================
 
     document.getElementById("buscarOperacao").onclick = () => {
         modalOperacao.style.display = "flex";
         listaOperacoes.innerHTML = "";
+
         operacoes.forEach(op => {
             const div = document.createElement("div");
             div.classList.add("empresa-item");
             div.innerText = op;
+
             div.onclick = () => {
                 operacaoInput.value = op;
                 modalOperacao.style.display = "none";
             };
+
             listaOperacoes.appendChild(div);
         });
     };
@@ -99,25 +126,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderizarMateriais(lista) {
         listaMateriais.innerHTML = "";
+
         lista.forEach(mat => {
             const div = document.createElement("div");
             div.classList.add("empresa-item");
             div.innerText = `${mat.codigo} - ${mat.descricao}`;
+
             div.onclick = () => {
                 linhaAtual.querySelector(".cod").value = mat.codigo;
                 linhaAtual.querySelector(".desc").value = mat.descricao;
                 modalMaterial.style.display = "none";
             };
+
             listaMateriais.appendChild(div);
         });
     }
 
     pesquisaMaterial.addEventListener("input", function () {
         const termo = this.value.toLowerCase();
+
         const filtrados = materiais.filter(mat =>
             mat.codigo.toLowerCase().includes(termo) ||
             mat.descricao.toLowerCase().includes(termo)
         );
+
         renderizarMateriais(filtrados);
     });
 
@@ -125,39 +157,55 @@ document.addEventListener("DOMContentLoaded", function () {
     // TABELA DINÂMICA
     // ==============================
 
-    function adicionarLinha() {
+function adicionarLinha() {
 
-        const row = document.createElement("tr");
+    const row = document.createElement("tr");
 
-        row.innerHTML = `
-            <td><input type="text" class="cod"></td>
-            <td>
-                <div class="item-container">
-                    <input type="text" class="desc item-input">
-                    <button type="button">
-                        <span class="material-symbols-outlined">search</span>
-                    </button>
-                </div>
-            </td>
-            <td><input type="number" class="qnt" value="" min="0"></td>
-            <td><input type="number" class="valor" value="" min="0" step="0.01"></td>
-            <td><input type="text" class="lacre"></td>
-        `;
+    row.innerHTML = `
+        <td><input type="text" class="cod"></td>
+        <td>
+            <div class="item-container">
+                <input type="text" class="desc item-input">
+                <button type="button">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+            </div>
+        </td>
+        <td><input type="number" class="qnt" min="0"></td>
+        <td><input type="number" class="valor" min="0" step="0.01"></td>
+        <td><input type="text" class="lacre"></td>
+    `;
 
-        row.querySelector("button").onclick = () => abrirModalMaterial(row);
+    const inputCodigo = row.querySelector(".cod");
+    const inputDescricao = row.querySelector(".desc");
 
-        tbody.appendChild(row);
-    }
+    inputCodigo.addEventListener("blur", function () {
+
+        const codigoDigitado = inputCodigo.value.trim();
+
+        if (!codigoDigitado) return;
+
+        const materialEncontrado = materiais.find(m =>
+            m.codigo.trim() === codigoDigitado
+        );
+
+        if (materialEncontrado) {
+            inputDescricao.value = materialEncontrado.descricao;
+        }
+    });
+
+    row.querySelector("button").onclick = () => abrirModalMaterial(row);
+
+    document.getElementById("itens").appendChild(row);
+}
 
     // Criar 5 linhas iniciais
     for (let i = 0; i < 5; i++) {
         adicionarLinha();
     }
 
-    // Botão adicionar nova linha
     adicionarLinhaBtn.onclick = () => adicionarLinha();
-
-    // ==============================
+        // ==============================
     // TOTAL AUTOMÁTICO (QNT x VALOR)
     // ==============================
 
@@ -174,7 +222,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         document.getElementById("valorTotal").innerText = totalGeral.toFixed(2);
-
     });
 
     // ==============================
@@ -182,12 +229,18 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==============================
 
     window.addEventListener("click", function (e) {
-        if (e.target === modalEmpresa) modalEmpresa.style.display = "none";
-        if (e.target === modalOperacao) modalOperacao.style.display = "none";
-        if (e.target === modalMaterial) modalMaterial.style.display = "none";
+
+        if (e.target === modalEmpresa)
+            modalEmpresa.style.display = "none";
+
+        if (e.target === modalOperacao)
+            modalOperacao.style.display = "none";
+
+        if (e.target === modalMaterial)
+            modalMaterial.style.display = "none";
     });
         // ==============================
-    // GERAR PDF OFICIAL COMPLETO
+    // GERAR PDF COMPLETO
     // ==============================
 
     window.gerarPDF = function () {
@@ -270,8 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ["CNPJ", campoCNPJ.value],
                 ["Natureza da Operação", operacaoInput.value]
             ],
-            theme: "grid",
-            styles: { fontSize: 9 }
+            theme: "grid"
         });
 
         y = doc.lastAutoTable.finalY + 5;
@@ -311,9 +363,7 @@ document.addEventListener("DOMContentLoaded", function () {
             startY: y,
             head: [["NF REF", "CÓDIGO", "PRODUTO", "QNT", "VALOR UN", "VALOR TOTAL"]],
             body: dadosTabela,
-            theme: "grid",
-            styles: { fontSize: 8 },
-            headStyles: { fillColor: [230, 230, 230] }
+            theme: "grid"
         });
 
         y = doc.lastAutoTable.finalY + 5;
@@ -328,10 +378,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ["TOTAL", "R$ " + document.getElementById("valorTotal").innerText]
             ],
             theme: "grid",
-            styles: {
-                fontStyle: "bold",
-                halign: "right"
-            }
+            styles: { fontStyle: "bold", halign: "right" }
         });
 
         y = doc.lastAutoTable.finalY + 5;
@@ -347,73 +394,61 @@ document.addEventListener("DOMContentLoaded", function () {
                 ["Quem irá transportar", transportadoraInput.value],
                 ["Frete", freteSelecionado.value]
             ],
-            theme: "grid",
-            styles: { fontSize: 9 }
+            theme: "grid"
         });
 
         y = doc.lastAutoTable.finalY + 5;
 
-// =========================
-// OBSERVAÇÕES (TEXTO ÚNICO)
-// =========================
+        // =========================
+        // OBSERVAÇÕES
+        // =========================
 
-let textoObservacoes = "";
-let contadorObs = 1;
+        let textoObservacoes = "";
+        let contadorObs = 1;
 
-document.querySelectorAll("#itens tr").forEach(row => {
+        document.querySelectorAll("#itens tr").forEach(row => {
 
-    const descricao = row.querySelector(".desc").value.trim();
-    const qnt = parseFloat(row.querySelector(".qnt").value) || 0;
-    const valor = parseFloat(row.querySelector(".valor").value) || 0;
-    const lacre = row.querySelector(".lacre").value.trim();
+            const descricao = row.querySelector(".desc").value.trim();
+            const qnt = parseFloat(row.querySelector(".qnt").value) || 0;
+            const valor = parseFloat(row.querySelector(".valor").value) || 0;
+            const lacre = row.querySelector(".lacre").value.trim();
 
-    if (descricao && qnt > 0 && valor > 0 && lacre) {
+            if (descricao && qnt > 0 && valor > 0 && lacre) {
 
-        let ida = "", volta = "";
+                let ida = "", volta = "";
 
-        if (lacre.includes("/")) {
-            const partes = lacre.split("/");
-            ida = partes[0]?.trim() || "";
-            volta = partes[1]?.trim() || "";
-        } else {
-            ida = lacre;
+                if (lacre.includes("/")) {
+                    const partes = lacre.split("/");
+                    ida = partes[0]?.trim() || "";
+                    volta = partes[1]?.trim() || "";
+                } else {
+                    ida = lacre;
+                }
+
+                let linha = `[ITEM ${String(contadorObs).padStart(2, "0")}] – ${descricao}`;
+                if (ida) linha += ` – LACRE DE IDA: ${ida}`;
+                if (volta) linha += ` | LACRE DE VOLTA: ${volta}`;
+
+                textoObservacoes += linha + "\n";
+                contadorObs++;
+            }
+        });
+
+        if (observacaoInput.value.trim() !== "") {
+            if (textoObservacoes !== "") textoObservacoes += "\n";
+            textoObservacoes += observacaoInput.value.trim();
         }
 
-        let linha = `[ITEM ${String(contadorObs).padStart(2, "0")}] – ${descricao}`;
-
-        if (ida) linha += ` – LACRE DE IDA: ${ida}`;
-        if (volta) linha += ` | LACRE DE VOLTA: ${volta}`;
-
-        textoObservacoes += linha + "\n";
-
-        contadorObs++;
-    }
-});
-
-// Observação manual
-if (observacaoInput.value.trim() !== "") {
-
-    if (textoObservacoes !== "")
-        textoObservacoes += "\n";
-
-    textoObservacoes += observacaoInput.value.trim();
-}
-
-if (textoObservacoes !== "") {
-
-    doc.autoTable({
-        startY: y,
-        head: [["OBSERVAÇÕES"]],
-        body: [[textoObservacoes]],
-        theme: "grid",
-        styles: {
-            fontSize: 9,
-            cellPadding: 4
+        if (textoObservacoes !== "") {
+            doc.autoTable({
+                startY: y,
+                head: [["OBSERVAÇÕES"]],
+                body: [[textoObservacoes]],
+                theme: "grid"
+            });
+            y = doc.lastAutoTable.finalY + 10;
         }
-    });
 
-    y = doc.lastAutoTable.finalY + 10;
-}
         // =========================
         // ASSINATURA
         // =========================
