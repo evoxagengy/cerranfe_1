@@ -42,6 +42,22 @@ document.addEventListener("DOMContentLoaded", function () {
         "Transferência entre Filiais"
     ];
 
+        function controlarNFRef() {
+
+            const operacao = operacaoInput.value.trim();
+
+            if (
+                operacao === "Remessa p/ Devolução" ||
+                operacao === "Devolução de Mercadoria"
+            ) {
+                nfRefInput.disabled = false;
+            } else {
+                nfRefInput.value = "";
+                nfRefInput.disabled = true;
+            }
+
+        }
+
     fetch("empresas.json")
         .then(r => r.json())
         .then(d => empresas = d);
@@ -108,7 +124,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             div.onclick = () => {
                 operacaoInput.value = op;
+
                 modalOperacao.style.display = "none";
+
+                controlarNFRef();
             };
 
             listaOperacoes.appendChild(div);
@@ -245,6 +264,20 @@ function adicionarLinha() {
     // ==============================
 
     window.gerarPDF = function () {
+
+        const operacao = operacaoInput.value.trim();
+        const nfRef = nfRefInput.value.trim();
+
+        if (
+            operacao === "Remessa p/ Devolução" ||
+            operacao === "Devolução de Mercadoria"
+        ) {
+            if (nfRef === "") {
+                alert("Informe a NF de Referência para operações de devolução.");
+                nfRefInput.focus();
+                return;
+            }
+        }
 
         const freteSelecionado = document.querySelector('input[name="frete"]:checked');
         if (!freteSelecionado) {
