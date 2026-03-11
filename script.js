@@ -373,14 +373,19 @@ function adicionarLinha() {
         // TOTAL
         // =========================
 
-        doc.autoTable({
-            startY: y,
-            body: [
-                ["TOTAL", "R$ " + document.getElementById("valorTotal").innerText]
-            ],
-            theme: "grid",
-            styles: { fontStyle: "bold", halign: "right" }
-        });
+        const total = parseFloat(document.getElementById("valorTotal").innerText);
+
+            doc.autoTable({
+                startY: y,
+                body: [
+                    ["TOTAL", "R$ " + total.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })]
+                ],
+                theme: "grid",
+                styles: { fontStyle: "bold", halign: "right" }
+            });
 
         y = doc.lastAutoTable.finalY + 5;
 
@@ -468,3 +473,4 @@ function adicionarLinha() {
     };
 
 });
+
