@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const solicitanteInput = document.getElementById("solicitante");
     const cargoInput = document.getElementById("cargo");
     const observacaoInput = document.getElementById("descricao");
+    const nfRefInput = document.getElementById("nfref");
 
     const tbody = document.getElementById("itens");
     const adicionarLinhaBtn = document.getElementById("adicionarLinhaBtn");
@@ -29,14 +30,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const operacoes = [
         "Remessa p/ Conserto",
+        "Remessa p/ Acoplamento",
+        "Remessa p/ Devolução",
+        "Simples Remessa",
+        "Venda de Sucata",
+        "Venda",
         "Retorno de Conserto",
         "Remessa p/ Industrialização",
         "Retorno de Industrialização",
-        "Remessa p/ Acoplamento",
-        "Remessa p/ devolução",
-        "Simples Remessa",
-        "Venda",
-        "Venda de Sucata",
         "Devolução de Mercadoria",
         "Transferência entre Filiais"
     ];
@@ -346,14 +347,14 @@ function adicionarLinha() {
 
                 const totalLinha = qnt * valor;
 
-                dadosTabela.push([
-                    String(contador).padStart(5, "0"),
-                    codigo,
-                    descricao,
-                    qnt,
-                    valor.toFixed(2),
-                    totalLinha.toFixed(2)
-                ]);
+                    dadosTabela.push([
+                        nfRefInput.value || "",
+                        codigo,
+                        descricao,
+                        qnt,
+                        valor.toFixed(2),
+                        totalLinha.toFixed(2)
+                    ]);
 
                 contador++;
             }
@@ -467,3 +468,4 @@ function adicionarLinha() {
     };
 
 });
+
