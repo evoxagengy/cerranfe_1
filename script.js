@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Remessa p/ Devolução",
         "Simples Remessa",
         "Venda de Sucata",
+        "Remessa p/ Garantia",
         "Venda",
         "Retorno de Conserto",
         "Remessa p/ Industrialização",
@@ -506,4 +507,5 @@ function adicionarLinha() {
     };
 
 });
+
 
