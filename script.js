@@ -304,7 +304,7 @@ function adicionarLinha() {
 
             if (!codigo || !descricao ||
                 !qnt || parseFloat(qnt) <= 0 ||
-                !valor || parseFloat(valor) < 0) {
+                !valor || parseFloat(valor) <= 0) {
 
                 erroLinha = index + 1;
             } else {
@@ -377,7 +377,7 @@ function adicionarLinha() {
             const qnt = parseFloat(row.querySelector(".qnt").value) || 0;
             const valor = parseFloat(row.querySelector(".valor").value) || 0;
 
-            if (codigo && descricao && qnt > 0 && valor > 0) {
+            if (codigo && descricao && qnt > 0 && valor >= 0) {
 
                 const totalLinha = qnt * valor;
 
