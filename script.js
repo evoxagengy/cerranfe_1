@@ -303,8 +303,8 @@ function adicionarLinha() {
             if (!linhaAtiva) return;
 
             if (!codigo || !descricao ||
-                !qnt || parseFloat(qnt) <= 0 ||
-                !valor || parseFloat(valor) = 0) {
+            !qnt || parseFloat(qnt) <= 0 ||
+            valor === "" || parseFloat(valor) < 0) {
 
                 erroLinha = index + 1;
             } else {
