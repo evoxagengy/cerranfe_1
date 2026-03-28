@@ -503,7 +503,7 @@ function adicionarLinha() {
             styles: { halign: "center" }
         });
 
-        doc.save("SOLICITACAO_NF_OFICIAL.pdf");
+        doc.save("SOLICITACAO_NF.pdf");
     };
 
 });
